@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.support.wait import WebDriverWait
+from selenium.common.exceptions import TimeoutException
 from typing import List, Iterator
 from itertools import chain
 from time import perf_counter
@@ -10,6 +11,7 @@ import os
 from pathlib import Path
 import json
 import random
+import time
 
 class Comments:
     
@@ -256,6 +258,21 @@ class Bot:
                                 .get_attribute('href').split('/')[-2]
         return user
 
+    def read_comment(self):
+        # Message Popup `Retry` (Timeout=Inf since this won't be an obstacle from the internet)
+        WebDriverWait(self.driver, float('Inf'), 10).until_not(
+            lambda x: x.find_element_by_tag_name('p'))
+
+        while True:
+            try:
+                WebDriverWait(self.driver, self.timeout).until(
+                    lambda x: x.find_element_by_css_selector('article[role=\'presentation\'] span[aria-label=\'Load more comments\']'))
+                self.driver \
+                    .find_element_by_css_selector('article[role=\'presentation\'] span[aria-label=\'Load more comments\']') \
+                    .click()
+            except TimeoutException:
+                break
+        
 
     def send_comment(self, comment:str):
 
@@ -306,7 +323,9 @@ class Bot:
 
 
         for comment in comments.generate():
-            self.send_comment(comment)
+            #self.send_comment(comment)
+            print(comment)
+            time.sleep(random.randint(1,5))
 
 
     def close_driver(self):
