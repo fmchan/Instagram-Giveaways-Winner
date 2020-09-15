@@ -1,28 +1,11 @@
 from configparser import ConfigParser
 from modules.instagram_bot import Bot
 
-
-ASCII = '''
-\n\n
-\t\t\t .----------------.  .----------------.  .----------------. 
-\t\t\t| .--------------. || .--------------. || .--------------. |
-\t\t\t| |  ____  ____  | || |   _    _     | || |    ______    | |
-\t\t\t| | |_   ||   _| | || |  | |  | |    | || |   / ____ `.  | |
-\t\t\t| |   | |__| |   | || |  | |__| |_   | || |   `'  __) |  | |
-\t\t\t| |   |  __  |   | || |  |____   _|  | || |   _  |__ '.  | |
-\t\t\t| |  _| |  | |_  | || |      _| |_   | || |  | \____) |  | |
-\t\t\t| | |____||____| | || |     |_____|  | || |   \______.'  | |
-\t\t\t| |              | || |              | || |              | |
-\t\t\t| '--------------' || '--------------' || '--------------' |
-\t\t\t '----------------'  '----------------'  '----------------' 
-\n\n\n\t\t\t\t\t\t\t\t\tCreated by: Fytex\n\n\n
-'''
-
-
 parser = ConfigParser()
 parser.read('config.ini', encoding='utf8')
 
-post_link = parser.get('Required', 'Post Link')
+post_code = parser.get('Required', 'Post Code')
+post_link = 'https://www.instagram.com/p/' + post_code
 expr = parser.get('Required', 'Expression')
 username = parser.get('Required', 'UserName')
 password = parser.get('Required', 'Password')
@@ -30,12 +13,11 @@ password = parser.get('Required', 'Password')
 db = parser.getboolean('Optional', 'DB', fallback=True)
 window = parser.getboolean('Optional', 'Window', fallback=True)
 user_connections = parser.get('Optional', 'UserTarget', fallback=None)
+user_participants = parser.get('Optional', 'Participants', fallback=None)
 from_followers = parser.getboolean('Optional', 'Followers', fallback=True)
 limit = parser.getint('Optional', 'Limit', fallback=None)
 timeout = parser.getint('Optional', 'Timeout', fallback=30)
 save_only = parser.getboolean('Optional', 'SaveOnly', fallback=False)
-
-print(ASCII)
 
 bot = Bot(window, timeout)
 
@@ -64,7 +46,10 @@ else:
 
 	print(('followers' if from_followers else 'followings') + '\' database complete!')
 
-#print(connections)
+if user_participants:
+	connections = bot.get_and_reformat_json(post_code, connections)
+
+print(connections)
 
 if not save_only:
     print('Let\'s win this giveaway together! Spamming...')

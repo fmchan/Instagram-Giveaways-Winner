@@ -1,6 +1,6 @@
 [Required]
 
-	Post Link  = url
+	Post Code  = code
 
 	Expression = I want to win this giveaway! @, @
 			# Use @ to choose where to write each mention
@@ -17,6 +17,7 @@
 [Optional] # Remove '#' before each line to enable option
 
 	#DB = True
+	#Participants = True
 
 	#Window	  	 = True
 		# Show Web Browser (if not then runs in background)

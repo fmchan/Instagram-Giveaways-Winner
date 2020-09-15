@@ -107,6 +107,12 @@ class Bot:
         with open(f'records//db//{username}.json', 'r') as file:
             return json.load(file)
 
+    def get_and_reformat_json(self, code:str, connections:List[str]) -> List[str]:
+        with open(f'records//tags//{code}.json', 'r') as file:
+            data = json.load(file)
+            common_elements = set(data).intersection(connections)
+            return list(common_elements) + list(set(connections).difference(common_elements))
+
     def get_user_connections(self, username:str, limit:int=None, followers=True) -> List[str]:
 
         '''
