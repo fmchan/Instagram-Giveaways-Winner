@@ -9,6 +9,7 @@ import sys
 import os
 from pathlib import Path
 import json
+import random
 
 class Comments:
     
@@ -102,6 +103,10 @@ class Bot:
         self.driver.switch_to.window(self.driver.window_handles[-1]) # could write 'main' but later on could be modified
         
     
+    def get_user_json(self, username:str) -> List[str]:
+        with open(f'records//db//{username}.json', 'r') as file:
+            return json.load(file)
+
     def get_user_connections(self, username:str, limit:int=None, followers=True) -> List[str]:
 
         '''

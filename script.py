@@ -27,7 +27,7 @@ expr = parser.get('Required', 'Expression')
 username = parser.get('Required', 'UserName')
 password = parser.get('Required', 'Password')
 
-
+db = parser.getboolean('Optional', 'DB', fallback=True)
 window = parser.getboolean('Optional', 'Window', fallback=True)
 user_connections = parser.get('Optional', 'UserTarget', fallback=None)
 from_followers = parser.getboolean('Optional', 'Followers', fallback=True)
@@ -54,11 +54,17 @@ if not user_connections:
 
 print(f'Searching and saving {"followers" if from_followers else "followings"}...')
 
-connections = bot.get_user_connections(user_connections,
+if db:
+	connections = bot.get_user_json(username)
+else:
+	connections = bot.get_user_connections(user_connections,
+									   username=username,
                                        limit=limit,
                                        followers=from_followers)
 
-print(('followers' if from_followers else 'followings') + '\' database complete!')
+	print(('followers' if from_followers else 'followings') + '\' database complete!')
+
+#print(connections)
 
 if not save_only:
     print('Let\'s win this giveaway together! Spamming...')
