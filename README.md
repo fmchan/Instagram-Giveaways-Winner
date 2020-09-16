@@ -5,18 +5,42 @@
 ![GitHub last commit](https://img.shields.io/github/last-commit/fytex/Instagram-Giveaways-Winner?style=for-the-badge)
 
 
-##### Instagram Bot which when given a post url will spam mentions to increase the chances of winning
+##### Instagram Bot which when given a post code will spam mentions to increase the chances of winning
 
 
 ## How does this bot work?
 It works as a browser simulator using selenium.
 
-There are four steps:
-
+Original from Fytex:
 1. Log in
 2. Find user from post
 3. Find followers/followings
 4. Start spamming mentions in the post
+
+My modification:
+1. Log in
+2. Find user from post
+3. read a json file (A) which is a list of all users who are playing the giveaway and also the friends they have tagged
+4. read a json file (B) which is a list of all users who are following you
+5. reformat these two json files
+    5.1. form a list (C) which only keeps the users who are following you in list A
+    5.2. form a list (D) take away the users in list C from list A and shuffle these users
+    5.3. concatenate list C and D to be the final connection list
+6. Start spamming mentions in the post
+    6.1. delay 2-10 seconds for each comment write
+    6.2. like other comments for each 4 comment writes in a row
+    6.3. wait 30 seconds when it meets "Couldn't post comment" alert
+    6.4. increase the waiting time if the alert still exist
+    6.5. stop and complete when the comment write hits the limit
+
+
+### Why do I modify?
+1. Fytex's bot only allows a very limited comment writes like 5
+2. Fytex's bot fetchs all the followers/followings, which take a very long waiting time
+3. fetching followers/followings from target user doesn't make sense since most of the giveaway requires tagging friends
+4. my bot does like comments for avoiding a single robotic action detected.
+5. for the point 3 and 4 of my modification. I will explain it later for fetching two json lists from another bot I made with PHP
+6. i have to thank for Fytex's great contribution. If I have seen further, it is by standing upon the shoulders of giants.
 
 
 ### Pre-Setup Warning
@@ -46,48 +70,3 @@ These commands can change depending on your configuration. Such as python/py/pyt
 
 If you need help add me on discord or join the server and ask me (links in my profile's bio) :)
 
-
-### All settings/credentials can be changed in config.ini.
-
-Browser's window can be invisible (in background) if Window's option is deactivated.
-
-- Step 1 requires both username/email and password.
-
-- Step 2 will only occur if no UserTarget is specified in the file.
-    - UserTarget is the user where the bot will get the followers/followings to mention.
-    - The timeout is a way to prevent blocking while trying to log in by stopping the program.
-
-- Step 3 is the search and find part where the bot saves all users.
-    - You can specify the limit of users in the file (it will pick the lowest one between the limit and the number of followers/followings from the UserTarget, the higher the number is, more time will take).
-    - In the file you can either choose followers or followings. 
-    - The timeout is a way to prevent blocking while searching for followers/followings in case it gets stuck by stopping the program.
-
-- Step 4 is where all the fun begins. It starts spamming mentions in the post.
-    - By enabling SaveOnly's option this step won't run. This option is used in case you only want to save the followers/followings and use them later.
-    - You can edit the message and add as many mentions as you want (mentions will never be repeated).
-    
-    
-    
-### How do the records (database) work?
-
-There are two sections:
-  - followers
-  - followings
-  
-Depending on what you choose it will save in the respective directory. Then it will choose the file's name using the following format `{UserTarget}_{total}.json` where `UserTarget` is the user where we got the followers/followings and `total` is the number of users we got.
-When searching for a `UserTarget` if the lowest one between the `limit` (in the config file)  and the number of followers/followings from the `UserTarget` is already met in a file then it will skip Step 2 and use that file automatically.
-
-
-### Warnings:
-
-I would recommend using an alternative account which you aren't afraid of losing because it could go wrong in the worst case. However I've never experienced any bad situations using this script.
-
-Instagram has a comment's request rate-limit to avoid spamming. From my research it has an algorithm which varies from user to user. Since Instagram doesn't provide a time for reset we have to try every x seconds. We chose it to be every 10 seconds. If a message pops up saying that it couldn't post the comment its because you hit that rate-limit so you just have to wait. (You don't have to do anything its all automatic)
-
-
-#### Future Updates:
-  - [ ] Add a followers/followings tracker so it won't repeat the count if we restart the bot
-  - [ ] Add a way to find followers/followings some at a time until it reaches the limit/maximum. This way we can find followers/followings and post comments in a cycle.
-  - [ ] Add specific file from records (database) to use as users to mention
-  - [ ] Find out the best interval between each comment for your account
-  - [ ] Login using cookies to prevent logging in too many times using username and password
