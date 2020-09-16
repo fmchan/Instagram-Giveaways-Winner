@@ -2,3 +2,4 @@ records
 drivers
 config.ini
 modules/__pycache__
+logs

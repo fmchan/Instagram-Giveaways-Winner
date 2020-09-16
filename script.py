@@ -1,5 +1,6 @@
 from configparser import ConfigParser
 from modules.instagram_bot import Bot
+import time
 
 parser = ConfigParser()
 parser.read('config.ini', encoding='utf8')
@@ -51,6 +52,7 @@ if user_participants:
 	connections = bot.get_and_reformat_json(post_code, connections)
 
 #print(connections)
+start_time = time.time()
 
 if not save_only:
     print('Let\'s win this giveaway together! Spamming...')
@@ -58,3 +60,4 @@ if not save_only:
     bot.comment_post(post_link, expr, connections, count_comments)
 
 print('Program finished with success!')
+print("--- %s seconds ---" % (time.time() - start_time))

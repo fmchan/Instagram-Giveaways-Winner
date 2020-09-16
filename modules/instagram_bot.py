@@ -5,6 +5,7 @@ from selenium.common.exceptions import TimeoutException
 from typing import List, Iterator
 from itertools import chain
 from time import perf_counter
+from datetime import datetime
 import re
 import sys
 import os
@@ -280,7 +281,7 @@ class Bot:
     def send_comment_like(self):
         WebDriverWait(self.driver, float('Inf'), 10).until_not(
             lambda x: x.find_element_by_tag_name('p'))
-        for i in range(random.randint(2,5)):
+        for i in range(random.randint(2,3)):
             try:
                 WebDriverWait(self.driver, self.timeout).until(
                     lambda x: x.find_element_by_css_selector('article[role=\'presentation\'] svg[aria-label=\'Like\']'))
@@ -321,7 +322,7 @@ class Bot:
               .click()
             time.sleep(1)
             if (self.driver.find_element_by_css_selector('div.Z2m7o').text.find('post comment') >= 0):
-                print(idx, 'cannot comment, gotta sleep', baseSec * idx, 'secs')
+                print(datetime.now(), idx, 'cannot comment, gotta sleep', baseSec * idx, 'secs')
                 self.send_comment_like()
                 time.sleep(baseSec * idx)
                 idx = idx + 1
@@ -353,9 +354,9 @@ class Bot:
 
         idx = 1
         for comment in comments.generate():
-            print(idx, ':', comment)
+            print(datetime.now(), idx, ':', comment)
             self.send_comment(comment)
-            time.sleep(random.randint(2,10))
+            time.sleep(random.randint(2,8))
             if (idx % 4 == 0):
                 self.send_comment_like()
             idx = idx + 1
