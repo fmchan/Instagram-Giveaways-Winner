@@ -113,7 +113,9 @@ class Bot:
         with open(f'records//tags//{code}.json', 'r') as file:
             data = json.load(file)
             common_elements = set(data).intersection(connections)
-            return list(common_elements) + list(set(connections).difference(common_elements))
+            user_following_not_comment = list(set(connections).difference(common_elements))
+            random.shuffle(user_following_not_comment)
+            return list(common_elements) + user_following_not_comment
 
     def get_user_connections(self, username:str, limit:int=None, followers=True) -> List[str]:
 
@@ -258,7 +260,7 @@ class Bot:
                                 .get_attribute('href').split('/')[-2]
         return user
 
-    def read_comment(self):
+    '''def read_comment(self):
         # Message Popup `Retry` (Timeout=Inf since this won't be an obstacle from the internet)
         WebDriverWait(self.driver, float('Inf'), 10).until_not(
             lambda x: x.find_element_by_tag_name('p'))
@@ -272,7 +274,22 @@ class Bot:
                     .click()
             except TimeoutException:
                 break
+    '''
         
+    def send_comment_like(self):
+        WebDriverWait(self.driver, float('Inf'), 10).until_not(
+            lambda x: x.find_element_by_tag_name('p'))
+        for i in range(random.randint(2,5)):
+            try:
+                WebDriverWait(self.driver, self.timeout).until(
+                    lambda x: x.find_element_by_css_selector('article[role=\'presentation\'] svg[aria-label=\'Like\']'))
+                self.driver \
+                    .find_element_by_css_selector('article[role=\'presentation\'] svg[aria-label=\'Like\']') \
+                    .click()
+                print('liked')
+                time.sleep(random.randint(1,3))
+            except TimeoutException:
+                break
 
     def send_comment(self, comment:str):
 
@@ -294,9 +311,21 @@ class Bot:
                     .send_keys(comment)
         
         # Click Post's Button to send Comment
-        self.driver \
-            .find_element_by_css_selector('article[role=\'presentation\'] form > button') \
-            .click()
+        idx = 1
+        baseSec = 30
+        while True:
+        # Click Button to send Comment
+            self.driver \
+              .find_element_by_css_selector('article[role=\'presentation\'] form > button[type=submit]') \
+              .click()
+            time.sleep(1)
+            if (self.driver.find_element_by_css_selector('div.Z2m7o').text.find('post comment') >= 0):
+                print(idx, 'cannot comment, gotta sleep', baseSec * idx, 'secs')
+                self.send_comment_like()
+                time.sleep(baseSec * idx)
+                idx = idx + 1
+            else:
+                break
 
         # Wait the loading icon disappear
         WebDriverWait(self.driver, self.timeout).until_not(
@@ -304,7 +333,7 @@ class Bot:
         
         
         
-    def comment_post(self, url:str, expr:str, connections:List[str]):
+    def comment_post(self, url:str, expr:str, connections:List[str], count_comments:int):
         expr_parts = re.split(r'(?<!\\)@', expr)
         n = len(expr_parts) - 1
 
@@ -321,11 +350,16 @@ class Bot:
 
         comments = Comments(chunks(), expr_parts)
 
-
+        idx = 1
         for comment in comments.generate():
-            #self.send_comment(comment)
-            print(comment)
-            time.sleep(random.randint(1,5))
+            print(idx, ':', comment)
+            self.send_comment(comment)
+            time.sleep(random.randint(2,10))
+            if (idx % 4 == 0):
+                self.send_comment_like()
+            idx = idx + 1
+            if (idx > count_comments):
+                break
 
 
     def close_driver(self):

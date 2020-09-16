@@ -18,6 +18,7 @@
 
 	#DB = True
 	#Participants = True
+	#Comments = 30
 
 	#Window	  	 = True
 		# Show Web Browser (if not then runs in background)
