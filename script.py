@@ -11,7 +11,8 @@ expr = parser.get('Required', 'Expression')
 username = parser.get('Required', 'UserName')
 password = parser.get('Required', 'Password')
 
-comment_json = parser.get('Optional', 'Collect Comment File Path', fallback=False)
+comment_json = parser.get('Optional', 'Collect Comment File Path', fallback=None)
+can_create_comment_json = parser.getboolean('Optional', 'Create Comment Json', fallback=False)
 db = parser.getboolean('Optional', 'DB', fallback=False)
 window = parser.getboolean('Optional', 'Window', fallback=True)
 user_connections = parser.get('Optional', 'UserTarget', fallback=None)
@@ -23,6 +24,11 @@ count_comments = parser.getint('Optional', 'Comments', fallback=30)
 save_only = parser.getboolean('Optional', 'SaveOnly', fallback=False)
 
 bot = Bot(window, timeout)
+
+print('Create Comment Json by PHP...')
+
+if can_create_comment_json:
+  bot.create_comment_json_by_php(post_code, comment_json)
 
 print('Logging in...')
 
@@ -50,7 +56,7 @@ else:
 	print(('followers' if from_followers else 'followings') + '\' database complete!')
 
 if user_participants:
-	connections = bot.get_and_reformat_json(post_code, connections, comment_json)
+	connections = bot.get_and_reformat_json(post_code, connections)
 
 #print(connections)
 start_time = time.time()

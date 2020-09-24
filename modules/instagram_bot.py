@@ -111,14 +111,19 @@ class Bot:
         with open(f'records//db//{username}.json', 'r') as file:
             return json.load(file)
 
-    def get_and_reformat_json(self, code:str, connections:List[str], comment_json:str) -> List[str]:
-
+    def create_comment_json_by_php(self, codes:str, comment_json:str):
         result = subprocess.run(
-            ['php', comment_json, code],    # program and arguments
+            ['php', comment_json, codes],    # program and arguments
             stdout=subprocess.PIPE,  # capture stdout
             check=True               # raise exception if program fails
         )
-        data = json.loads(result.stdout)
+
+    def get_and_reformat_json(self, code:str, connections:List[str]) -> List[str]:
+        try:
+            with open(f'records/tags/'+code+'.json', 'r') as file:
+                data = json.load(file)
+        except FileNotFoundError as e:
+            print(e)
 
         common_elements = set(data).intersection(connections)
         print('your followings who are joining this giveaway:', len(common_elements))
@@ -287,10 +292,15 @@ class Bot:
                 break
     '''
         
-    def send_comment_like(self):
+    def send_comment_like_rand(self):
         WebDriverWait(self.driver, float('Inf'), 10).until_not(
             lambda x: x.find_element_by_tag_name('p'))
         for i in range(random.randint(2,3)):
+            if (self.send_comment_like() == False):
+                break
+
+    def send_comment_like(self):
+        if len(self.driver.find_elements_by_css_selector('article[role=\'presentation\'] svg[aria-label=\'Like\']')):
             try:
                 WebDriverWait(self.driver, self.timeout).until(
                     lambda x: x.find_element_by_css_selector('article[role=\'presentation\'] svg[aria-label=\'Like\']'))
@@ -299,8 +309,10 @@ class Bot:
                     .click()
                 print('liked')
                 time.sleep(random.randint(1,3))
+                return True
             except TimeoutException:
-                break
+                return False
+        return False
 
     def send_comment(self, comment:str):
 
@@ -332,7 +344,7 @@ class Bot:
             time.sleep(1)
             if (self.driver.find_element_by_css_selector('div.Z2m7o').text.find('post comment') >= 0):
                 print(datetime.now(), idx, 'cannot comment, gotta sleep', baseSec * idx, 'secs')
-                self.send_comment_like()
+                self.send_comment_like_rand()
                 time.sleep(baseSec * idx)
                 idx = idx + 1
             else:
@@ -367,11 +379,13 @@ class Bot:
             self.send_comment(comment)
             time.sleep(random.randint(2,8))
             if (idx % 4 == 0):
-                self.send_comment_like()
+                self.send_comment_like_rand()
             idx = idx + 1
             if (idx > count_comments):
                 break
 
+        while self.send_comment_like():
+            pass
 
     def close_driver(self):
         self.driver.close()

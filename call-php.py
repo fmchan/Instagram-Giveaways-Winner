@@ -11,7 +11,7 @@ names = json.loads(result.stdout)         # result.stdout contains a byte-string
 print(names[0])
 '''
 
-comment_json = '/Library/WebServer/Documents/instagram/collect-comment.php'
+comment_json = 'C:\\www\\scraper\\collect-comment.php'
 code = 'CFW31dHDwRr'
 
 result = subprocess.run(
@@ -27,7 +27,14 @@ result = subprocess.run(
 #p = subprocess.Popen(['php', comment_json, code])
 #p.communicate() #now wait plus that you can send commands to process
 '''
-print(json.loads(result.stdout.decode('utf-8')))
+#print(list(result.stdout.decode('utf-8')))
+try:
+    with open(f'records/tags/'+code+'.json', 'r') as file:
+    	tags = json.load(file)
+    	print(tags[0])
+    
+except FileNotFoundError:
+    pass
 #data = json.loads(json.dumps(result.stdout))
 #print(data)
 '''

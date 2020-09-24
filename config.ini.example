@@ -1,6 +1,7 @@
 [Required]
 
 	Post Code  = code
+	Post Codes = 
 
 	Expression = I want to win this giveaway! @, @
 			# Use @ to choose where to write each mention
@@ -8,6 +9,7 @@
 			# following escape character '\' like this \@fytex
 			# You can edit this message as much as you want
 			# and add as many mentions as you want
+	Expressions = 
 
 	UserName   = username
 
@@ -21,6 +23,7 @@
 	#Comments = 30
 
 	#Collect Comment File Path =  /xxx/xxx.php
+	#Create Comment Json = True
 
 	#Window	  	 = True
 		# Show Web Browser (if not then runs in background)
