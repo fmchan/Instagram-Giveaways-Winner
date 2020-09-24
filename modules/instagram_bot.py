@@ -13,6 +13,7 @@ from pathlib import Path
 import json
 import random
 import time
+import subprocess
 
 class Comments:
     
@@ -110,13 +111,21 @@ class Bot:
         with open(f'records//db//{username}.json', 'r') as file:
             return json.load(file)
 
-    def get_and_reformat_json(self, code:str, connections:List[str]) -> List[str]:
-        with open(f'records//tags//{code}.json', 'r') as file:
-            data = json.load(file)
-            common_elements = set(data).intersection(connections)
-            user_following_not_comment = list(set(connections).difference(common_elements))
-            random.shuffle(user_following_not_comment)
-            return list(common_elements) + user_following_not_comment
+    def get_and_reformat_json(self, code:str, connections:List[str], comment_json:str) -> List[str]:
+
+        result = subprocess.run(
+            ['php', comment_json, code],    # program and arguments
+            stdout=subprocess.PIPE,  # capture stdout
+            check=True               # raise exception if program fails
+        )
+        data = json.loads(result.stdout)
+
+        common_elements = set(data).intersection(connections)
+        print('your followings who are joining this giveaway:', len(common_elements))
+        print(common_elements)
+        user_following_not_comment = list(set(connections).difference(common_elements))
+        random.shuffle(user_following_not_comment)
+        return list(common_elements) + user_following_not_comment
 
     def get_user_connections(self, username:str, limit:int=None, followers=True) -> List[str]:
 

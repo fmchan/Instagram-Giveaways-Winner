@@ -11,6 +11,7 @@ expr = parser.get('Required', 'Expression')
 username = parser.get('Required', 'UserName')
 password = parser.get('Required', 'Password')
 
+comment_json = parser.get('Optional', 'Collect Comment File Path', fallback=False)
 db = parser.getboolean('Optional', 'DB', fallback=False)
 window = parser.getboolean('Optional', 'Window', fallback=True)
 user_connections = parser.get('Optional', 'UserTarget', fallback=None)
@@ -49,7 +50,7 @@ else:
 	print(('followers' if from_followers else 'followings') + '\' database complete!')
 
 if user_participants:
-	connections = bot.get_and_reformat_json(post_code, connections)
+	connections = bot.get_and_reformat_json(post_code, connections, comment_json)
 
 #print(connections)
 start_time = time.time()

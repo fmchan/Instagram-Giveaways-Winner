@@ -20,6 +20,8 @@
 	#Participants = True
 	#Comments = 30
 
+	#Collect Comment File Path =  /xxx/xxx.php
+
 	#Window	  	 = True
 		# Show Web Browser (if not then runs in background)
 
