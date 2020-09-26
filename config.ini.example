@@ -1,15 +1,10 @@
 [Required]
-
-	Post Code  = code
-	Post Codes = 
-
-	Expression = I want to win this giveaway! @, @
-			# Use @ to choose where to write each mention
-			# in case you want to write a specific @ use the
-			# following escape character '\' like this \@fytex
-			# You can edit this message as much as you want
-			# and add as many mentions as you want
-	Expressions = 
+	#Expression = A @ @ @
+	# Use @ to choose where to write each mention
+	# in case you want to write a specific @ use the
+	# following escape character '\' like this \@fytex
+	# You can edit this message as much as you want
+	# and add as many mentions as you want
 
 	UserName   = username
 
@@ -21,6 +16,7 @@
 	#DB = True
 	#Participants = True
 	#Comments = 30
+	#Include Tagged = True
 
 	#Collect Comment File Path =  /xxx/xxx.php
 	#Create Comment Json = True
